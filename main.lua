@@ -1,6 +1,6 @@
 local allowGuests = false
 local carLimit = 2 -- Server car limit
-local playerLimit = 15 -- Server player limit
+local playerLimit = 10 -- Server player limit
 
 function onInit()
 	print("BanManager 1.4.1 Loaded")
