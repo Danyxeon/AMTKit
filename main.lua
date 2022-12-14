@@ -1,6 +1,6 @@
 local allowGuests = false
-local carLimit = 3
-local playerLimit = 10
+local carLimit = 2 -- Server car limit
+local playerLimit = 15 -- Server player limit
 
 function onInit()
 	print("BanManager 1.4.1 Loaded")
@@ -12,6 +12,8 @@ end
 function playerAuthHandler(name, role, isGuest)
 
 	playersCurrent = (MP.GetPlayerCount() - 1)
+	pattern = {"%-"}
+    patternout = {"%%-"}
 
 	if isGuest and not allowGuests then
 		return "You must be signed in to join this server!"
@@ -22,19 +24,15 @@ function playerAuthHandler(name, role, isGuest)
 	banFile:close()
 
 	local authFile = assert(io.open("../perms", "r"))
-	local authRead = authFile:read("*all")
+	local authlist = authFile:read("*all")
 	authFile:close()
 
-    pattern = {"%-"}
-    patternout = {"%%-"}
     for i = 1, # pattern do
         name = name:gsub(pattern[i], patternout[i])
     end
 
-	if playersCurrent == playerLimit then
-		if string.match(authRead, name) ~= true then
-			return "The server is full."
-		end
+	if playersCurrent == playerLimit and string.match(authlist, name) ~= true then
+		return "The server is full."
 	end
 	
 	print("BanManager: Checking banlist for " .. name)
@@ -46,14 +44,32 @@ function playerAuthHandler(name, role, isGuest)
 	end
 end
 
+function spawnLimitHandler(playerID)
+	local playerVehicles = MP.GetPlayerVehicles(playerID)
+	local playerCarCount = 0
+
+	-- Check for nil table and loop through player cars
+	if playerVehicles ~= nil then
+		for _ in pairs(playerVehicles) do playerCarCount = playerCarCount + 1 end
+	end
+
+	carLimit = carLimit + 1
+
+	if (playerCarCount + 1) > carLimit then
+		MP.DropPlayer(playerID)
+		MP.SendChatMessage(-1, "Player " .. MP.GetPlayerName(playerID) .. " was kicked for spawning more than " .. carLimit .. " cars.")
+		print("BanManager: Player " .. MP.GetPlayerName(playerID) .. " was kicked for spawning too many cars.")
+	end
+end
+
 function chatMessageHandler(playerID, senderName, message)
 
 	-- Initialize files
 	local authFile = assert(io.open("../perms", "r"))
-	local authStore = authFile:read ("*all")
+	local authlist = authFile:read ("*all")
 	local banlist = assert(io.open("../banlist", "a+"))
 
-	local authMatch = string.match(file, senderName)
+	local authMatch = string.match(authlist, senderName)
 	local msgTxt = string.match(message, "%s(.*)")
 	local msgNum = tonumber(string.match(message, "%d+"))
 
@@ -78,9 +94,9 @@ function chatMessageHandler(playerID, senderName, message)
 		return -1
 	end
 
-	if senderName == permsMatch then
+	if senderName == authMatch then
 		if getPlayerList then
-			local i = 9
+			local i = playerLimit - 1
 			while i >= 0 do
 				local playerName = MP.GetPlayerName(i)
 				if playerName == nil then
@@ -108,19 +124,19 @@ function chatMessageHandler(playerID, senderName, message)
 			if msgNum == nil then
 				MP.SendChatMessage(playerID, "No ID given")
 			else
-				local KbanID = MP.GetPlayerName(msgNum)
-				banlist:write("\n" .. KbanID)
+				local KbanUsr = MP.GetPlayerName(msgNum)
+				banlist:write("\n" .. KbanUsr)
 				banlist:flush()
 				banlist:close()
 				MP.DropPlayer(msgNum)
-				MP.SendChatMessage(playerID, "Banned user " .. KbanID)
+				MP.SendChatMessage(playerID, "Banned user " .. KbanUsr)
 			end
 			return -1
 		end
 
 		if msgBan then
 			if msgTxt == nil then
-				MP.SendChatMessage(playerID, "Missing username")
+				MP.SendChatMessage(playerID, "Invalid username")
 			else
 				banlist:write("\n" .. msgTxt)
 				banlist:flush()
@@ -132,18 +148,4 @@ function chatMessageHandler(playerID, senderName, message)
 	end
 end
 
-function spawnLimitHandler(playerID)
-	local playerVehicles = MP.GetPlayerVehicles(playerID)
-	local playerCarCount = 0
 
-	-- Check for nil table and loop through player cars
-	if playerVehicles ~= nil then
-		for _ in pairs(playerVehicles) do playerCarCount = playerCarCount + 1 end
-	end
-
-	if (playerCarCount + 1) > carLimit then
-		MP.DropPlayer(playerID)
-		MP.SendChatMessage(-1, "Player " .. MP.GetPlayerName(playerID) .. " was kicked for spawning more than " .. carLimit .. " cars.")
-		print("BanManager: Player " .. MP.GetPlayerName(playerID) .. " was kicked for spawning too many cars.")
-	end
-end
