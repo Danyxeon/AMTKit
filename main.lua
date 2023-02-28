@@ -1,9 +1,9 @@
 local allowGuests = false
 local carLimit = 2 -- Server car limit
-local playerLimit = 10 -- Server player limit
+local playerLimit = 11 -- Server player limit with one slot for staff members
 
 function onInit()
-	print("BanManager 1.4.1 Loaded")
+	print("BanManager 1.4.2 Loaded")
 	MP.RegisterEvent("onPlayerAuth","playerAuthHandler")
 	MP.RegisterEvent("onChatMessage", "chatMessageHandler")
 	MP.RegisterEvent("onVehicleSpawn", "spawnLimitHandler")
@@ -31,8 +31,8 @@ function playerAuthHandler(name, role, isGuest)
         name = name:gsub(pattern[i], patternout[i])
     end
 
-	if playersCurrent == playerLimit and string.match(authlist, name) ~= true then
-		return "The server is full."
+	if playersCurrent == (playerLimit - 2) and not string.match(authlist, name) then
+		return "The server is full. Last slot is reserved for staff."
 	end
 	
 	print("BanManager: Checking banlist for " .. name)
