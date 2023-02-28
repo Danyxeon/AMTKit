@@ -2,7 +2,7 @@
 A BeamMP plugin for banning and kicking on BeamMP servers. Supports multiple servers with one file.
 
 #### Set up:
-To install just move the banman folder into `/Resources/Server/`. Banlist and perms files need to be moved one directory up from where the BeamMP-server executable is located.
+To install just move the banman folder into `/Resources/Server/`. Banlist and perms files need to be moved one directory up/back from where the BeamMP-server executable is located.
 
 - To block guest accounts from joining, change allowGuests in main.lua to true if needed. 
 - Set carLimit in main.lua to the desired number (the same as the server car limit).
