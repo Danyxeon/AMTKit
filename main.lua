@@ -1,9 +1,14 @@
+-- Configure your settings here --
+
 local allowGuests = false
 local carLimit = 2 -- Server car limit
-local playerLimit = 11 -- Server player limit with one slot for staff members
+local playerLimit = 10 -- Server player limit
+local staffSlot = false
+
+----------------------------------
 
 function onInit()
-	print("BanManager 1.4.2 Loaded")
+	print("BanManager 1.4.3 Loaded")
 	MP.RegisterEvent("onPlayerAuth","playerAuthHandler")
 	MP.RegisterEvent("onChatMessage", "chatMessageHandler")
 	MP.RegisterEvent("onVehicleSpawn", "spawnLimitHandler")
@@ -11,13 +16,9 @@ end
 
 function playerAuthHandler(name, role, isGuest)
 
-	playersCurrent = (MP.GetPlayerCount() - 1)
-	pattern = {"%-"}
-    patternout = {"%%-"}
-
-	if isGuest and not allowGuests then
-		return "You must be signed in to join this server!"
-	end
+	local playersCurrent = MP.GetPlayerCount()
+	local pattern = {"%-"}
+    local patternout = {"%%-"}
 
 	local banFile = assert(io.open("../banlist", "r"))
 	local banlist = banFile:read ("*all")
@@ -27,12 +28,18 @@ function playerAuthHandler(name, role, isGuest)
 	local authlist = authFile:read("*all")
 	authFile:close()
 
+	if isGuest and not allowGuests then
+		return "You must be signed in to join this server!"
+	end
+
     for i = 1, # pattern do
         name = name:gsub(pattern[i], patternout[i])
     end
 
-	if playersCurrent == (playerLimit - 2) and not string.match(authlist, name) then
-		return "The server is full. Last slot is reserved for staff."
+	if staffSlot == true then
+		if playersCurrent == (playerLimit - 1) and not string.match(authlist, name) then
+			return "The server is full. Last slot is reserved for staff."
+		end
 	end
 	
 	print("BanManager: Checking banlist for " .. name)
@@ -42,9 +49,11 @@ function playerAuthHandler(name, role, isGuest)
 	else
 		print("BanManager: All good, user clear to join.")
 	end
+
 end
 
 function spawnLimitHandler(playerID)
+
 	local playerVehicles = MP.GetPlayerVehicles(playerID)
 	local playerCarCount = 0
 
@@ -60,6 +69,7 @@ function spawnLimitHandler(playerID)
 		MP.SendChatMessage(-1, "Player " .. MP.GetPlayerName(playerID) .. " was kicked for spawning more than " .. carLimit .. " cars.")
 		print("BanManager: Player " .. MP.GetPlayerName(playerID) .. " was kicked for spawning too many cars.")
 	end
+
 end
 
 function chatMessageHandler(playerID, senderName, message)
@@ -146,6 +156,7 @@ function chatMessageHandler(playerID, senderName, message)
 			return -1
 		end
 	end
+
 end
 
 
