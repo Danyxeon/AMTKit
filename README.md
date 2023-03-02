@@ -6,7 +6,8 @@ To install just move the banman folder into `/Resources/Server/`. Banlist and pe
 
 - To block guest accounts from joining, change allowGuests in main.lua to true if needed. 
 - Set carLimit in main.lua to the desired number (the same as the server car limit).
-- Set playerLimit to the correct value. One slot is reserved for staff, so playerLimit at 10 means 9 player slots and one staff slot.
+- Set playerLimit to the same value as in ServerConfig.toml.
+- Set staffSlot to true if needed. Staff slot reserves a slot when the server is full for a player with staff perms to join.
 
 To add bans/permissions, just add the names to the appropriate file on separate lines. The banlist and perms list are case sensitive.
 
