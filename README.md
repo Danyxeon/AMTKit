@@ -1,4 +1,4 @@
-# Ban Manager
+# AMTKit
 A BeamMP plugin for banning and kicking on BeamMP servers. Supports multiple servers with one file.
 
 #### Set up:
