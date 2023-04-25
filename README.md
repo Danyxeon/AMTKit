@@ -2,7 +2,7 @@
 A BeamMP plugin for banning and kicking on BeamMP servers. Supports multiple servers with one file.
 
 #### Set up:
-To install just move the AMTKit folder into `/Resources/Server/`. Blacklist and authlist files will be created a directory up from where the BeamMP-server executable is located.
+To set up just move the AMTKit folder into `/Resources/Server/`. Blacklist and authlist files will be created a directory up from where the BeamMP-server executable is located.
 
 - To block guest accounts from joining, change allowGuests in config.lua to false if needed. 
 - Set staffSlot to true if needed. Staff slot reserves a slot when the server is full for a player with staff permissions to join.
