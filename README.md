@@ -2,21 +2,32 @@
 A BeamMP plugin for banning and kicking on BeamMP servers. Supports multiple servers with one file.
 
 #### Set up:
-To install just move the banman folder into `/Resources/Server/`. Banlist and perms files need to be moved one directory up/back from where the BeamMP-server executable is located.
+To install just move the AMTKit folder into `/Resources/Server/`. Blacklist and authlist files will be created a directory up from where the BeamMP-server executable is located.
 
-- To block guest accounts from joining, change allowGuests in main.lua to true if needed. 
-- Set carLimit in main.lua to the desired number (the same as the server car limit).
-- Set playerLimit to the same value as in ServerConfig.toml.
-- Set staffSlot to true if needed. Staff slot reserves a slot when the server is full for a player with staff perms to join.
+- To block guest accounts from joining, change allowGuests in config.lua to false if needed. 
+- Set staffSlot to true if needed. Staff slot reserves a slot when the server is full for a player with staff permissions to join.
 
-To add bans/permissions, just add the names to the appropriate file on separate lines. The banlist and perms list are case sensitive.
+To add bans/permissions manually, just add the names to the appropriate file on separate lines. The blacklist and authlist are case sensitive.
 
-#### Commands:
+To add custom responses, just add the command and response into response.lua
+
+#### User Commands:
+To see usernames and ID's<br>
+`/id`
+
+Shows the message of the day<br>
+`/motd`
+
+Messages player matching the ID<br>
+`/dm (id) (message)`
+
+Starts a countdown from 3<br>
+`/countdown`
+
+#### Elevated Commands:
+
 To kick a player <br>
 `/kick (id)` 
-
-To see usernames and ID's (configured for 10 players, wont show all players if player limit is above 10)<br>
-`/idmatch`
 
 To ban a player <br>
 `/ban (username)`
